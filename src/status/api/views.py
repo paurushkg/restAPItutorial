@@ -1,5 +1,7 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions
 from django.shortcuts import get_object_or_404
+from rest_framework.authentication import SessionAuthentication
+
 from status.models import Status
 from .serializer import StatusSerializer
 
@@ -9,8 +11,8 @@ class StatusAPIDetailView(
     mixins.DestroyModelMixin,
     generics.RetrieveAPIView
 ):
-    permission_classes = []
-    authentication_classes = []
+    # permission_classes = []
+    # authentication_classes = []
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     lookup_field = 'id'
@@ -32,8 +34,8 @@ class StatusAPIView(
     mixins.DestroyModelMixin,
     generics.ListAPIView
 ):
-    permission_classes = []
-    authentication_classes = []
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # or IsAuthenticated
+    # authentication_classes = [SessionAuthentication]
     # queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
