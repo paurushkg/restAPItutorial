@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #third_party
+    # third_party
     'rest_framework',
+    # 'rest_framework_jwt',
 
-    #local
+    # local
+    'accounts',
     'status',
     'updates',
 ]
@@ -128,4 +130,4 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-from cfeapi.restconf.main import REST_FRAMEWORK
+from cfeapi.restconf.main import REST_FRAMEWORK, JWT_AUTH
