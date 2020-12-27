@@ -11,6 +11,7 @@ jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 User = get_user_model()
 
+
 class AuthView(APIView):
     # authentication_classes = []
     permission_classes = [permissions.AllowAny]
@@ -22,7 +23,7 @@ class AuthView(APIView):
         data = request.data
         username = data.get('username')
         password = data.get('password')
-        user = authenticate(username=username, password=password)
+        # user = authenticate(username=username, password=password)
         qs = User.objects.filter(
             Q(username__iexact=username) | Q(email__iexact=username)
         ).distinct()
@@ -36,3 +37,29 @@ class AuthView(APIView):
                 print(user)
                 return Response(response)
             return Response({"detail": "Invalid Credentials"}, status=401)
+
+    class AuthView(APIView):
+        # authentication_classes = []
+        permission_classes = [permissions.AllowAny]
+
+        def post(self, request, *args, **kwargs):
+            print(request.user)
+            if request.user.is_authenticated:
+                return Response({'detail': 'You are already authenticated'}, status=400)
+            data = request.data
+            username = data.get('username')
+            password = data.get('password')
+            user = authenticate(username=username, password=password)
+            qs = User.objects.filter(
+                Q(username__iexact=username) | Q(email__iexact=username)
+            ).distinct()
+            if qs.count() == 1:
+                user_obj = qs.first()
+                if user_obj.check_password(password):
+                    user = user_obj
+                    payload = jwt_payload_handler(user)
+                    token = jwt_encode_handler(payload)
+                    response = jwt_response_payload_handler(token, user, request=request)
+                    print(user)
+                    return Response(response)
+                return Response({"detail": "Invalid Credentials"}, status=401)
